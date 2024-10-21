@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKDUM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <br>
+        <h1>EKDUM</h1>
+        <br><br>
+        <div class="content">
+            <div class="left">
+                <form id="fileUploadForm" enctype="multipart/form-data">
+                    <label for="script">Choose Analysis Method:</label>
+                    <div class="script-selection">
+                        <button type="button" id="scriptA" class="script-btn active">Kernel Analysis</button>
+                        <button type="button" id="scriptB" class="script-btn">Visual Analysis</button>
+                        <input type="hidden" name="script" id="selectedScript" value="analysis1.sh">
+                    </div>
+                    
+                    <label for="file">Select log file to Upload:</label>
+                    <input type="file" id="file" name="file" accept=".txt,.log">
+                    
+                    <div id="progressWrapper" style="display:none;">
+                        <label for="progress">File upload progress:</label>
+                        <progress id="progressBar" value="0" max="100"></progress>
+                    </div>
+                    <br>
+                    
+                    <br>
+                    <button type="submit">Analyse</button>
+                    
+                    <p>OR</p> <!-- OR text -->
+
+                    <label for="manualInput">Enter log text for Analysis:</label>
+                    <textarea id="manualInput" class="left-textarea" rows="5" cols="30" placeholder="Type your logs here..."></textarea>
+                    <br>
+                    <br>
+                    <button type="button" id="manualAnalyzeBtn">Analyse</button>
+                </form>
+                <div id="loader" style="display:none;">
+                    <img src="{{ url_for('static', filename='spinner.gif') }}" alt="Loading">
+                    <p>Analysis in progress...</p>
+                </div>
+            </div>
+
+            <div class="right">
+                <h2>Analysis Result:</h2>
+                <textarea id="result" class="right-textarea" rows="10" cols="50" readonly></textarea>
+                <br>
+                <br>
+                <br>
+                <button id="downloadBtn" style="display:none;">Download Result</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Counter -->
+    <div id="analysisCounter">Total Analyses: 0</div>
+
+    <script>
+        $(document).ready(function() {
+            // Load the analysis count from the file
+            $.get("/counter", function(data) {
+                $("#analysisCounter").text("Total Analyses: " + data.count);
+            });
+
+            // Script selection button functionality
+            $("#scriptA").on("click", function() {
+                $("#scriptA").addClass("active");
+                $("#scriptB").removeClass("active");
+                $("#selectedScript").val("analysis1.sh");  // Update hidden input to Script A
+            });
+
+            $("#scriptB").on("click", function() {
+                $("#scriptB").addClass("active");
+                $("#scriptA").removeClass("active");
+                $("#selectedScript").val("analysis2.sh");  // Update hidden input to Script B
+            });
+
+            // Handle file upload form
+            $("#fileUploadForm").on("submit", function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                var formData = new FormData(this);
+                var fileInput = $("#file")[0].files[0];
+
+                // Show progress wrapper
+                $("#progressWrapper").show();
+                $("#progressBar").val(0);
+                $("#result").val('');
+                $("#downloadBtn").hide();
+
+                // Fake progress for demo purposes
+                var progressInterval = setInterval(function() {
+                    var currentValue = $("#progressBar").val();
+                    if (currentValue < 100) {
+                        $("#progressBar").val(currentValue + 10);
+                    } else {
+                        clearInterval(progressInterval);
+                    }
+                }, 300);
+
+                // Simulate file upload and progress
+                setTimeout(function() {
+                    // Show the spinner here
+                    $("#loader").show();
+
+                    $.ajax({
+                        url: "/upload",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            $("#loader").hide(); // Hide the spinner
+                            $("#result").val(response.result);
+                            $("#downloadBtn").show();
+                            $("#progressWrapper").hide();
+
+                            // Update the counter
+                            updateCounter();
+                        },
+                        error: function(response) {
+                            $("#loader").hide(); // Hide the spinner
+                            if (response.responseJSON && response.responseJSON.error) {
+                                $("#result").val("Error: " + response.responseJSON.error);
+                            } else {
+                                $("#result").val("An unexpected error occurred.");
+                            }
+                            $("#progressWrapper").hide();
+                        }
+                    });
+                }, 3000); // Simulate a delay for upload (adjust as needed)
+            });
+
+            // Manual text analysis button functionality
+            $("#manualAnalyzeBtn").on("click", function() {
+                var inputText = $("#manualInput").val();
+
+                if (inputText.trim() === "") {
+                    alert("Please enter some text for analysis.");
+                    return;
+                }
+
+                // Show loader
+                $("#loader").show();
+                $("#result").val('');
+                $("#downloadBtn").hide();
+
+                // Simulate an AJAX call for text analysis
+                setTimeout(function() {
+                    $("#loader").hide(); // Hide the loader after analysis
+                    $("#result").val("Analysis of the entered text: " + inputText); // Simulated response
+                    $("#downloadBtn").show();
+
+                    // Update the counter
+                    updateCounter();
+                }, 2000); // Simulated delay for analysis
+            });
+
+            // Update the counter display and save to file
+            function updateCounter() {
+                $.get("/increment_counter", function(data) {
+                    $("#analysisCounter").text("Total Analyses: " + data.count);
+                });
+            }
+
+            // Download button functionality
+            $("#downloadBtn").on("click", function() {
+                var textToSave = $("#result").val();
+                var blob = new Blob([textToSave], { type: "text/plain" });
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = "analysis_result.txt";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        });
+    </script>
+</body>
+</html>

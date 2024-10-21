@@ -1,0 +1,229 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('{{ url_for("static", filename="your-background-image.jpg") }}'); /* Add your image path */
+    background-size: cover; /* Ensure the image covers the entire background */
+    background-position: center; /* Center the image */
+    margin: 0;
+    padding: 0;
+    color: #010101; /* Change text color for better contrast */
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    opacity: 0; /* Start hidden */
+    animation: fadeIn 1s ease forwards; /* Fade in effect */
+}
+
+h1 {
+    color: #333;
+    margin: 20px 0;
+    animation: fadeIn 1s ease;
+    transition: transform 0.3s ease; /* Add transition for zoom effect */
+}
+
+h1:hover {
+    transform: scale(1.05); /* Zoom in on hover */
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.left {
+    background: rgba(255, 255, 255, 0.9); /* Slightly transparent white for readability */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    flex: 0 0 30%; /* 30% width */
+    margin-right: 10px; /* Right margin */
+    margin-left: -10px; /* Negative left margin to move it left */
+    transition: transform 0.3s ease; /* Add transition for zoom effect */
+}
+
+.right {
+    background: rgba(255, 255, 255, 0.9); /* Slightly transparent white for readability */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    flex: 0 0 70%; /* 70% width */
+    margin-left: 10px;
+    height: 500px; /* Set a fixed height for the right container */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    transition: transform 0.3s ease; /* Add transition for zoom effect */
+}
+
+.left:hover, .right:hover {
+    transform: scale(1.03); /* Zoom in on hover */
+}
+
+.script-selection {
+    margin: 10px 0;
+}
+
+.script-btn {
+    background-color: #c5cdf9;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s ease; /* Add box-shadow transition */
+}
+
+.script-btn:hover {
+    background-color: #03f484;
+    transform: scale(1.05);
+}
+
+.script-btn.active {
+    background-color: #012c5a;
+}
+
+label {
+    display: block;
+    margin: 15px 0 5px;
+    transition: transform 0.3s ease; /* Add transition for zoom effect */
+}
+
+label:hover {
+    transform: scale(1.05); /* Zoom in on hover */
+}
+
+input[type="file"], textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease, transform 0.3s ease; /* Add transition for zoom effect */
+}
+
+input[type="file"]:hover {
+    border-color: #007bff;
+}
+
+progress {
+    width: 100%;
+    height: 20px;
+    border-radius: 5px;
+    appearance: none;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #f3f3f3;
+    border-radius: 5px;
+}
+
+progress::-webkit-progress-value {
+    background-color: #007bff;
+    border-radius: 5px;
+}
+
+#loader {
+    display: none; /* Hide by default */
+    position: fixed; /* Fix position */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center the loader */
+    z-index: 1000; /* Ensure it is above other content */
+}
+
+#loader img {
+    width: 50px;
+    /* Remove rotation animation */
+}
+
+.left-textarea {
+    margin-top: 10px;
+    resize: none; /* Prevents resizing */
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease, transform 0.3s ease; /* Add transition for zoom effect */
+    height: 150px; /* Set height for the left textarea */
+    width: 100%; /* Full width of the left container */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.left-textarea:focus {
+    border-color: #007bff;
+}
+
+.left-textarea:hover {
+    transform: scale(1.02); /* Zoom in on hover */
+}
+
+.right-textarea {
+    margin-top: 10px;
+    resize: none; /* Prevents resizing */
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease, transform 0.3s ease; /* Add transition for zoom effect */
+    height: 350px; /* Set height for the right textarea */
+    width: 100%; /* Full width of the right container */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.right-textarea:focus {
+    border-color: #007bff;
+}
+
+.right-textarea:hover {
+    transform: scale(1.02); /* Zoom in on hover */
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Add box-shadow transition */
+}
+
+button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+#analysisCounter {
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    background: #28a745; /* Button-like green background */
+    color: white; 
+    padding: 10px 15px; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+    font-weight: bold; /* Make text bold */
+    font-size: 16px; /* Adjust font size */
+    display: flex; /* Flex display for center alignment */
+    align-items: center; /* Center vertically */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
